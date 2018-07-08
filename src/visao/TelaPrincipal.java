@@ -20,14 +20,15 @@ public class TelaPrincipal extends javax.swing.JFrame {
         label1 = new java.awt.Label();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Servidor do JOGO DA FORCA");
         setResizable(false);
 
-        jPanel1.setBackground(new java.awt.Color(51, 51, 51));
+        jPanel1.setBackground(new java.awt.Color(0, 0, 0));
         jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
 
         labelTitulo.setAlignment(java.awt.Label.CENTER);
         labelTitulo.setFont(new java.awt.Font("Dialog", 1, 72)); // NOI18N
-        labelTitulo.setForeground(new java.awt.Color(255, 255, 255));
+        labelTitulo.setForeground(new java.awt.Color(204, 204, 204));
         labelTitulo.setText("SERVIDOR ");
 
         labelStatus.setAlignment(java.awt.Label.CENTER);
@@ -120,14 +121,24 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
         Servidor servidor = new Servidor();
         servidor.criarConexao(12345);
-        JOptionPane.showConfirmDialog(null, "Esperando Jogadores");
         servidor.esperaConexao();
 
         while (true) {
-            servidor.trataConexao(servidor.getSocket1());
-            servidor.trataConexao(servidor.getSocket2());
+            if (servidor.getSocket1().isConnected()) {
+                servidor.trataConexao(servidor.getSocket1());
+                if (servidor.getSocket2().isConnected()) {
+                    servidor.trataConexao(servidor.getSocket2());
+                } else {
+                    JOptionPane.showMessageDialog(null, "Partida Encerrada... Servidor Finalizado");
+                    servidor.close();
+                    break;
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Partida Encerrada... Servidor Finalizado");
+                servidor.close();
+                break;
+            }
         }
-
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
